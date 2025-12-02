@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototipo - Sistema de Matrícula Online</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            margin-left: 15px;
+        }
+        
+        .logo-icon {
+            background-color: #3498db;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav li {
+            margin-left: 25px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        nav a:hover, nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .app-container {
+            background-color: white;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            min-height: 600px;
+            overflow: hidden;
+        }
+        
+        .screen {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.5s;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .screen-title {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .welcome-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .welcome-icon {
+            font-size: 4rem;
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-text {
+            max-width: 700px;
+            margin-bottom: 40px;
+        }
+        
+        .welcome-text h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .welcome-text p {
+            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: #3498db;
+            border: 2px solid #3498db;
+        }
+        
+        .btn-outline:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        .form-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .courses-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .course-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #3498db;
+            transition: transform 0.3s;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .course-code {
+            background-color: #f0f7ff;
+            color: #3498db;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .course-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .course-details {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        
+        .course-details div {
+            margin-bottom: 5px;
+        }
+        
+        .status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-available {
+            background-color: #e8f6f3;
+            color: #27ae60;
+        }
+        
+        .status-full {
+            background-color: #fdedec;
+            color: #e74c3c;
+        }
+        
+        .flujo-section {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 40px;
+            border-left: 5px solid #2ecc71;
+        }
+        
+        .flujo-title {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .flujo-list {
+            list-style-type: none;
+        }
+        
+        .flujo-list li {
+            padding: 10px 0;
+            border-bottom: 1px dashed #ddd;
+            display: flex;
+            align-items: center;
+        }
+        
+        .flujo-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .flujo-list li::before {
+            content: "→";
+            color: #2ecc71;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav li {
+                margin: 5px 10px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">M</div>
+                <h1>Sistema de Matrícula Online</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-link active" data-screen="inicio">Inicio</a></li>
+                    <li><a href="#" class="nav-link" data-screen="registro">Registro</a></li>
+                    <li><a href="#" class="nav-link" data-screen="listado">Listado</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <div class="app-container">
+            <!-- Pantalla de Inicio -->
+            <div class="screen active" id="inicio">
+                <div class="welcome-section">
+                    <div class="welcome-icon">📚</div>
+                    <div class="welcome-text">
+                        <h2>Bienvenido al Sistema de Matrícula Online</h2>
+                        <p>Este sistema permite a los estudiantes realizar su matrícula de manera sencilla y eficiente desde cualquier dispositivo con conexión a internet.</p>
+                        <p>Puedes registrar tus datos, seleccionar los cursos disponibles y revisar tu listado de matrícula en cualquier momento.</p>
+                    </div>
+                    
+                    <div class="actions">
+                        <button class="btn btn-primary" data-screen="registro">
+                            <span>📝</span> Ir al Registro
+                        </button>
+                        <button class="btn btn-secondary" data-screen="listado">
+                            <span>📋</span> Ver Listado de Cursos
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flujo-section">
+                    <h3 class="flujo-title">Flujo principal del sistema:</h3>
+                    <ul class="flujo-list">
+                        <li>El estudiante accede al sistema con sus credenciales</li>
+                        <li>Completa o actualiza sus datos personales en el registro</li>
+                        <li>Consulta el listado de cursos disponibles para el semestre</li>
+                        <li>Selecciona los cursos de su interés verificando horarios y disponibilidad</li>
+                        <li>Confirma su matrícula y recibe un comprobante</li>
+                        <li>Puede revisar o modificar su matrícula durante el período establecido</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Pantalla de Registro -->
+            <div class="screen" id="registro">
+                <h2 class="screen-title">Registro de Estudiante</h2>
+                
+                <div class="form-container">
+                    <form id="registroForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nombres">Nombres *</label>
+                                <input type="text" id="nombres" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="apellidos">Apellidos *</label>
+                                <input type="text" id="apellidos" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dni">DNI / Cédula *</label>
+                                <input type="text" id="dni" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="fecha-nacimiento">Fecha de Nacimiento *</label>
+                                <input type="date" id="fecha-nacimiento" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="correo">Correo Electrónico *</label>
+                            <input type="email" id="correo" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="telefono">Teléfono *</label>
+                                <input type="tel" id="telefono" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="carrera">Carrera *</label>
+                                <select id="carrera" required>
+                                    <option value="">Seleccione una carrera</option>
+                                    <option value="ingenieria">Ingeniería de Sistemas</option>
+                                    <option value="administracion">Administración de Empresas</option>
+                                    <option value="derecho">Derecho</option>
+                                    <option value="contabilidad">Contabilidad</option>
+                                    <option value="medicina">Medicina</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="semestre">Semestre *</label>
+                                <select id="semestre" required>
+                                    <option value="">Seleccione semestre</option>
+                                    <option value="1">1er Semestre</option>
+                                    <option value="2">2do Semestre</option>
+                                    <option value="3">3er Semestre</option>
+                                    <option value="4">4to Semestre</option>
+                                    <option value="5">5to Semestre</option>
+                                    <option value="6">6to Semestre</option>
+                                    <option value="7">7mo Semestre</option>
+                                    <option value="8">8vo Semestre</option>
+                                    <option value="9">9no Semestre</option>
+                                    <option value="10">10mo Semestre</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="modalidad">Modalidad *</label>
+                                <select id="modalidad" required>
+                                    <option value="">Seleccione modalidad</option>
+                                    <option value="presencial">Presencial</option>
+                                    <option value="virtual">Virtual</option>
+                                    <option value="semipresencial">Semipresencial</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="actions" style="justify-content: flex-start; margin-top: 30px;">
+                            <button type="submit" class="btn btn-primary">
+                                <span>💾</span> Guardar Datos
+                            </button>
+                            <button type="button" class="btn btn-outline" data-screen="inicio">
+                                <span>↶</span> Volver al Inicio
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Pantalla de Listado -->
+            <div class="screen" id="listado">
+                <h2 class="screen-title">Listado de Cursos Disponibles</h2>
+                
+                <div class="courses-list">
+                    <div class="course-card">
+                        <div class="course-header">
+                            <div class="course-code">MAT101</div>
+                            <div class="status status-available">Disponible</div>
+                        </div>
+                        <h3 class="course-title">Matemáticas Básicas</h3>
+                        <div class="course-details">
+                            <div><strong>Créditos:</strong> 4</div>
+                            <div><strong>Horario:</strong> Lunes y Miércoles 8:00 - 10:00</div>
+                            <div><strong>Profesor:</strong> Dr. Carlos Ruiz</div>
+                            <div><strong>Cupos:</strong> 35/40</div>
+                        </div>
+                        <button class="btn btn-primary btn-matricular" data-course="MAT101">Matricular</button>
+                    </div>
+                    
+                    <div class="course-card">
+                        <div class="course-header">
+                            <div class="course-code">PROG202</div>
+                            <div class="status status-available">Disponible</div>
+                        </div>
+                        <h3 class="course-title">Programación Avanzada</h3>
+                        <div class="course-details">
+                            <div><strong>Créditos:</strong> 5</div>
+                            <div><strong>Horario:</strong> Martes y Jueves 14:00 - 16:00</div>
+                            <div><strong>Profesor:</strong> Ing. Ana Gómez</div>
+                            <div><strong>Cupos:</strong> 28/30</div>
+                        </div>
+                        <button class="btn btn-primary btn-matricular" data-course="PROG202">Matricular</button>
+                    </div>
+                    
+                    <div class="course-card">
+                        <div class="course-header">
+                            <div class="course-code">BD303</div>
+                            <div class="status status-full">Completo</div>
+                        </div>
+                        <h3 class="course-title">Bases de Datos</h3>
+                        <div class="course-details">
+                            <div><strong>Créditos:</strong> 4</div>
+                            <div><strong>Horario:</strong> Lunes y Viernes 10:00 - 12:00</div>
+                            <div><strong>Profesor:</strong> Mg. Luis Fernández</div>
+                            <div><strong>Cupos:</strong> 30/30</div>
+                        </div>
+                        <button class="btn btn-outline" disabled>No disponible</button>
+                    </div>
+                    
+                    <div class="course-card">
+                        <div class="course-header">
+                            <div class="course-code">ING404</div>
+                            <div class="status status-available">Disponible</div>
+                        </div>
+                        <h3 class="course-title">Inglés Técnico</h3>
+                        <div class="course-details">
+                            <div><strong>Créditos:</strong> 3</div>
+                            <div><strong>Horario:</strong> Miércoles 16:00 - 19:00</div>
+                            <div><strong>Profesor:</strong> Lic. Patricia Soto</div>
+                            <div><strong>Cupos:</strong> 25/30</div>
+                        </div>
+                        <button class="btn btn-primary btn-matricular" data-course="ING404">Matricular</button>
+                    </div>
+                    
+                    <div class="course-card">
+                        <div class="course-header">
+                            <div class="course-code">ETICA505</div>
+                            <div class="status status-available">Disponible</div>
+                        </div>
+                        <h3 class="course-title">Ética Profesional</h3>
+                        <div class="course-details">
+                            <div><strong>Créditos:</strong> 2</div>
+                            <div><strong>Horario:</strong> Jueves 8:00 - 10:00</div>
+                            <div><strong>Profesor:</strong> Dra. Marta Rodríguez</div>
+                            <div><strong>Cupos:</strong> 38/40</div>
+                        </div>
+                        <button class="btn btn-primary btn-matricular" data-course="ETICA505">Matricular</button>
+                    </div>
+                    
+                    <div class="course-card">
+                        <div class="course-header">
+                            <div class="course-code">WEB606</div>
+                            <div class="status status-available">Disponible</div>
+                        </div>
+                        <h3 class="course-title">Desarrollo Web</h3>
+                        <div class="course-details">
+                            <div><strong>Créditos:</strong> 5</div>
+                            <div><strong>Horario:</strong> Martes y Viernes 16:00 - 18:00</div>
+                            <div><strong>Profesor:</strong> Ing. Roberto Castro</div>
+                            <div><strong>Cupos:</strong> 22/25</div>
+                        </div>
+                        <button class="btn btn-primary btn-matricular" data-course="WEB606">Matricular</button>
+                    </div>
+                </div>
+                
+                <div class="actions" style="margin-top: 30px;">
+                    <button class="btn btn-outline" data-screen="inicio">
+                        <span>↶</span> Volver al Inicio
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Prototipo del Sistema de Matrícula Online </p>
+            <p>© 2025 espinoza baltazar edith.</p>
+        </footer>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Navegación entre pantallas
+        document.querySelectorAll('.nav-link, .btn[data-screen]').forEach(element => {
+            element.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetScreen = this.getAttribute('data-screen');
+                
+                // Actualizar navegación activa
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                if (this.classList.contains('nav-link')) {
+                    this.classList.add('active');
+                } else {
+                    // Si se hizo clic en un botón, también actualizar la navegación
+                    document.querySelector(`.nav-link[data-screen="${targetScreen}"]`).classList.add('active');
+                }
+                
+                // Mostrar pantalla objetivo
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+                document.getElementById(targetScreen).classList.add('active');
+            });
+        });
+        
+        // Manejo del formulario de registro
+        document.getElementById('registroForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simular envío de formulario
+            showNotification('Datos guardados correctamente. Ahora puedes proceder a la matrícula.');
+            
+            // Redirigir al listado después de un breve retraso
+            setTimeout(() => {
+                document.querySelector('.nav-link[data-screen="listado"]').click();
+            }, 1500);
+        });
+        
+        // Manejo de matrícula en cursos
+        document.querySelectorAll('.btn-matricular').forEach(button => {
+            button.addEventListener('click', function() {
+                const courseCode = this.getAttribute('data-course');
+                showNotification(`Te has matriculado en el curso ${courseCode} correctamente.`);
+                
+                // Cambiar estado del botón
+                this.textContent = 'Matriculado';
+                this.classList.remove('btn-primary');
+                this.classList.add('btn-outline');
+                this.disabled = true;
+                
+                // Actualizar estado en la tarjeta del curso
+                const card = this.closest('.course-card');
+                const statusElement = card.querySelector('.status');
+                statusElement.textContent = 'Matriculado';
+                statusElement.classList.remove('status-available');
+                statusElement.classList.add('status-full');
+            });
+        });
+        
+        // Función para mostrar notificaciones
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Simular datos precargados en el formulario (para demo)
+        window.addEventListener('DOMContentLoaded', function() {
+            // Precargar algunos datos de ejemplo
+            document.getElementById('nombres').value = 'Juan Carlos';
+            document.getElementById('apellidos').value = 'Pérez López';
+            document.getElementById('dni').value = '87654321';
+            document.getElementById('correo').value = 'juan.perez@ejemplo.edu';
+            document.getElementById('telefono').value = '987654321';
+            document.getElementById('carrera').value = 'ingenieria';
+            document.getElementById('semestre').value = '5';
+            document.getElementById('modalidad').value = 'presencial';
+            
+            // Establecer fecha de nacimiento (hace 20 años)
+            const today = new Date();
+            const birthDate = new Date(today.getFullYear() - 20, today.getMonth(), today.getDate());
+            document.getElementById('fecha-nacimiento').valueAsDate = birthDate;
+        });
+    </script>
+</body>
+</html>
